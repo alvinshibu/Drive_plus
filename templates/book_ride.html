@@ -1,0 +1,217 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RideSwift Booking</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.css">
+    <style>
+        :root {
+            --primary-color: #FFC107; /* Yellow */
+            --secondary-color: #000;   /* Black */
+            --text-color: #fff;        /* White */
+            --bg-color: #212529;       /* Dark Background */
+            --alert-color: #f8d7da;    /* Alert Background */
+            --alert-text-color: #721c24; /* Alert Text Color */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff; /* Light background for contrast */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 2em; /* Larger font size for headers */
+        }
+
+        form {
+            display: grid;
+            gap: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+            color: var(--secondary-color); /* Changed to black for better visibility */
+        }
+
+        select, input[type="number"], input[type="datetime-local"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input[type="submit"], .home-button {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            text-align: center; /* Center text in the button */
+            display: inline-block; /* Display as an inline block */
+            margin-bottom: 20px; /* Space below the button */
+        }
+
+        input[type="submit"]:hover, .home-button:hover {
+            background-color: #ffca28;
+        }
+
+        .alert {
+            background-color: var(--alert-color);
+            color: var(--alert-text-color);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 16px; /* Increased font size */
+        }
+
+        .vehicle-list, .driver-list {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .vehicle-item, .driver-item {
+            background-color: #f1f1f1; /* Light background for vehicle and driver items */
+            color: #000; /* Black text for better contrast */
+            padding: 15px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .vehicle-item input[type="radio"], .driver-item input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .icon {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="container" style="margin-top: 80px;"> <!-- Adjust margin to avoid header overlap -->
+        <h1>Book Your Ride</h1>
+
+        <a href="{% url 'home' %}" class="home-button">Home</a> <!-- Home Button -->
+
+        <form method="POST">
+            {% csrf_token %}
+            <div>
+                <label for="start_location">Start Location:</label>
+                <select name="start_location" id="start_location" required>
+                    <option value="">Select Start Location</option>
+                    {% for location in locations %}
+                        <option value="{{ location.id }}">{{ location.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="end_location">End Location:</label>
+                <select name="end_location" id="end_location" required>
+                    <option value="">Select End Location</option>
+                    {% for location in locations %}
+                        <option value="{{ location.id }}">{{ location.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="number_of_passengers">Number of Passengers:</label>
+                <input type="number" name="number_of_passengers" required>
+            </div>
+
+            <div>
+                <label for="start_date">Start Date:</label>
+                <input type="datetime-local" name="start_date" required>
+            </div>
+
+            <div>
+                <label for="end_date">End Date:</label>
+                <input type="datetime-local" name="end_date" required>
+            </div>
+
+            <input type="submit" value="Search Vehicles & Drivers">
+        </form>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% if available_vehicles %}
+            <h2>Available Vehicles</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="start_location" value="{{ start_location.id }}">
+                <input type="hidden" name="end_location" value="{{ end_location.id }}">
+                <input type="hidden" name="number_of_passengers" value="{{ number_of_passengers }}">
+                <input type="hidden" name="start_date" value="{{ start_date }}">
+                <input type="hidden" name="end_date" value="{{ end_date }}">
+
+                <div class="vehicle-list">
+                    {% for vehicle in available_vehicles %}
+                        <div class="vehicle-item">
+                            <input type="radio" name="vehicle" value="{{ vehicle.id }}" required>
+                            <i class="fas fa-car icon"></i>
+                            <span>{{ vehicle.vehicle_model }} ({{ vehicle.vehicle_type }}-{{vehicle.color}}) - 
+                            Fare per km: Rs {{ vehicle.fare_per_km }} - Reg No. :{{vehicle.registration_number}}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <h2>Available Drivers</h2>
+                <div class="driver-list">
+                    {% for driver in available_drivers %}
+                        <div class="driver-item">
+                            <input type="radio" name="driver" value="{{ driver.id }}" required>
+                            <i class="fas fa-user icon"></i>
+                            <span>{{ driver.name }} (Phn: +91 {{ driver.phone_number }}) (License: {{ driver.license_number }})</span>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <input type="submit" name="confirm_booking" value="Confirm Booking">
+            </form>
+        {% endif %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.js"></script>
+    <script>
+        AOS.init();
+    </script>
+</body>
+</html>

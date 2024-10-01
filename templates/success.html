@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.css">
+    <style>
+        :root {
+            --primary-color: #FFC107; /* Yellow */
+            --secondary-color: #000;   /* Black */
+            --text-color: #fff;        /* White */
+            --bg-color: #212529;       /* Dark Background */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin-bottom: 20px;
+            font-size: 18px;
+            line-height: 1.5;
+            color: #000;
+        }
+
+        .go-home {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .go-home:hover {
+            background-color: #ffca28;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Booking Confirmed!</h1>
+        <p>Your booking is confirmed. We will call you shortly for further details.</p>
+        <a href="{% url 'home' %}" class="go-home">Go Home</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.js"></script>
+    <script>
+        AOS.init();
+    </script>
+</body>
+</html>

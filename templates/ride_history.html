@@ -1,0 +1,19 @@
+<h2>Your Ride History</h2>
+<table>
+    <tr>
+        <th>Pickup</th>
+        <th>Drop</th>
+        <th>Ride Type</th>
+        <th>Status</th>
+        <th>Fare</th>
+    </tr>
+    {% for ride in rides %}
+    <tr>
+        <td>{{ ride.pickup_location }}</td>
+        <td>{{ ride.drop_location }}</td>
+        <td>{{ ride.ride_type }}</td>
+        <td>{{ ride.status }}</td>
+        <td>{{ ride.fare }}</td>
+    </tr>
+    {% endfor %}
+</table>
